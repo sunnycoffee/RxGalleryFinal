@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.UriUtils;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import com.yalantis.ucrop.model.AspectRatio;
@@ -657,7 +658,7 @@ public class MediaGridFragment extends BaseFragment implements MediaGridView, Re
         } else {
             ContentValues contentValues = new ContentValues(1);
             contentValues.put(MediaStore.Images.Media.DATA, mImagePath);
-            Uri uri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            Uri uri = UriUtils.file2Uri(new File(mImagePath));
             captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         }
         // video : 1: 高质量  0 低质量
