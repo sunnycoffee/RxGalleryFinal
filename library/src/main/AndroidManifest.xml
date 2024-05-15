@@ -3,7 +3,7 @@
 
     <application>
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name=".utils.UtilsFileProvider"
             android:authorities="${applicationId}.rxgallery.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
