@@ -1,1 +1,16 @@
-<manifest package="cn.finalteam.rxgalleryfinal" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.finalteam.rxgalleryfinal">
+
+    <application>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.rxgallery.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/rx_gallery_file_paths" />
+        </provider>
+
+    </application>
+</manifest>

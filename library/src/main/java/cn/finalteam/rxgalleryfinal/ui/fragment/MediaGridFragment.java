@@ -20,11 +20,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.UriUtils;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 import com.yalantis.ucrop.model.AspectRatio;
@@ -658,12 +658,21 @@ public class MediaGridFragment extends BaseFragment implements MediaGridView, Re
         } else {
             ContentValues contentValues = new ContentValues(1);
             contentValues.put(MediaStore.Images.Media.DATA, mImagePath);
-            Uri uri = UriUtils.file2Uri(new File(mImagePath));
+            Uri uri = file2Uri(context, new File(mImagePath));
             captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         }
         // video : 1: 高质量  0 低质量
 //        captureIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
         startActivityForResult(captureIntent, TAKE_IMAGE_REQUEST_CODE);
+    }
+
+    public static Uri file2Uri(Context context, final File file) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            String authority = context.getPackageName() + ".rxgallery.fileprovider";
+            return FileProvider.getUriForFile(context, authority, file);
+        } else {
+            return Uri.fromFile(file);
+        }
     }
 
     @Override
@@ -822,13 +831,13 @@ public class MediaGridFragment extends BaseFragment implements MediaGridView, Re
 
         // mediaBean 有可能为Null，onNext 做了处理，在 getMediaBeanWithImage 时候就不处理Null了
         Observable.create((ObservableOnSubscribe<MediaBean>) subscriber -> {
-            MediaBean mediaBean =
-                    mConfiguration.isImage() ? MediaUtils.getMediaBeanWithImage(getContext(), images[0])
-                            :
-                            MediaUtils.getMediaBeanWithVideo(getContext(), images[0]);
-            subscriber.onNext(mediaBean);
-            subscriber.onComplete();
-        })
+                    MediaBean mediaBean =
+                            mConfiguration.isImage() ? MediaUtils.getMediaBeanWithImage(getContext(), images[0])
+                                    :
+                                    MediaUtils.getMediaBeanWithVideo(getContext(), images[0]);
+                    subscriber.onNext(mediaBean);
+                    subscriber.onComplete();
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableObserver<MediaBean>() {
